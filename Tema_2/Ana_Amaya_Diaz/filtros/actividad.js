@@ -44,15 +44,16 @@ function redConverter() {
   let pixels = handler.getPixels();
   console.log(pixels);
   //Aqui tu codigo
-  //for tradicional
-  for (let i = 0; i < pixels.length; i++) {
-    for (let j = 0; j < pixels[i].length; j++) {
-      //[0, 0, 0]; // R G B
-      pixels[i][j][1] = 0;
-      pixels[i][j][2] = 0;
+  let pixeles = [];
+  for (let x = 0; x < pixels.length; x++) {
+    let newRow =[];
+    for (let y = 0; y < pixels[x].length; y++) {     
+      let redPixel = [pixels[x][y][0], 0, 0]; 
+      newRow.push(redPixel); 
     }
-  }
-  handler.savePixels(pixels, outputPath);
+    pixeles.push(newRow);
+  } 
+  handler.savePixels(pixeles, outputPath);
 }
 
 /**
@@ -133,15 +134,17 @@ function blackAndWhiteConverter() {
   let pixels = handler.getPixels();
 
   //Aqui tu codigo
-  pixels = pixels.map(row =>
-    row.map(cell => {
-      let [r, g, b] = cell;
-      let media = (r + g + b) / 3;
-      return cell = media < 128 ? [0, 0, 0] : [255, 255, 255];      
-    })
-  );
- 
-  handler.savePixels(pixels, outputPath);
+  let pixeles = [];
+  for (let x = 0; x < pixels.length; x++) {
+    let newRow = [];
+    for (let y = 0; y < pixels[x].length; y++) {
+      let media = (pixels[x][y][0] + pixels[x][y][1] + pixels[x][y][2]) / 3;
+      let bwImage = media < 128 ? [0, 0, 0] : [255, 255, 255];
+      newRow.push(bwImage);
+    }
+    pixeles.push(newRow);
+  }
+  handler.savePixels(pixeles, outputPath);
 }
 
 /**
@@ -172,12 +175,20 @@ function dimBrightness(dimFactor) {
   let pixels = handler.getPixels();
 
   //Aqui tu codigo
-  for (let i = 0; i < pixels.length; i++) {
-    for (let j = 0; j < pixels[i].length; j++) {
-      pixels[i][j] = pixels[i][j].map(channel => Math.max(0, Math.min(255, channel / dimFactor)));
+  let pixeles = [];
+  for (let x = 0; x < pixels.length; x++) {
+    let newRow = [];
+    for (let y = 0; y < pixels[x].length; y++) {
+      let dimImage = ch => Math.max(0, Math.min(255, ch / dimFactor)); 
+      let redCH = dimImage(pixels[x][y][0]); 
+      let greenCH = dimImage(pixels[x][y][1]);
+      let blueCH = dimImage(pixels[x][y][2]);
+      newRow.push([redCH, greenCH, blueCH]);
     }
-  }
-  handler.savePixels(pixels, outputPath);
+    pixeles.push(newRow);
+  } 
+  
+  handler.savePixels(pixeles, outputPath);
 }
 
 /**
@@ -192,12 +203,19 @@ function invertColors() {
   let pixels = handler.getPixels();
 
   //Aqui tu codigo
-  for (let i = 0; i < pixels.length; i++) {
-    for (let j = 0; j < pixels[i].length; j++) {
-      pixels[i][j] = pixels[i][j].map(channel => 255 - channel);
+  let pixeles = [];
+  for (let x = 0; x < pixels.length; x++) {
+    let newRow = [];
+    for (let y = 0; y < pixels[x].length; y++) {
+      let invColor = ch => 255 - ch;
+      let redCH = invColor(pixels[x][y][0]);
+      let greenCH = invColor(pixels[x][y][1]);
+      let blueCH = invColor(pixels[x][y][2]);
+      newRow.push([redCH, greenCH, blueCH]);
     }
-  }
-  handler.savePixels(pixels, outputPath);
+    pixeles.push(newRow);
+  } 
+  handler.savePixels(pixeles, outputPath);
 }
 
 /**
@@ -233,7 +251,6 @@ function merge(alphaFirst, alphaSecond) {
       })
     )
   );
-  //console.log(pixels);
   dogHandler.savePixels(pixels, outputPath);
 }
 
